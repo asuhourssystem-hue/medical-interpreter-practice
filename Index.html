@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#111827">
+<title>Medical Interpreter Voice Practice</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151d31;--line:#2b3650;--text:#f4f6fb;--muted:#aeb8ce;--accent:#8fb8ff;--good:#9ce2bc}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b1020,#10182b);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:720px;margin:auto;padding:22px 16px 40px}h1{font-size:25px;margin:0 0 8px}.muted{color:var(--muted);font-size:14px;line-height:1.5}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin:14px 0}label{display:block;font-size:14px;color:var(--muted);margin:12px 0 7px}select,textarea,button{font:inherit;border-radius:12px;width:100%;padding:12px;border:1px solid var(--line);background:#0d1425;color:var(--text)}textarea{min-height:100px;resize:vertical}button{background:#263d66;border:1px solid #3e5c91;font-weight:650;margin-top:10px;cursor:pointer}button.secondary{background:#111a2d}button:disabled{opacity:.5}.pill{display:inline-block;padding:5px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:12px}.speaker{font-size:12px;color:var(--accent);letter-spacing:.1em;font-weight:700;margin-bottom:8px}.prompt{font-size:21px;line-height:1.45;font-weight:600;margin:8px 0 14px}.result{background:#0d1425;border-radius:12px;padding:12px;line-height:1.5;white-space:pre-wrap}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hidden{display:none}.status{padding:10px;border-radius:10px;background:#0d1425;color:var(--muted);margin-top:10px;line-height:1.4}.transcript{white-space:pre-wrap;line-height:1.5}.small{font-size:13px}
+</style></head><body><main>
+<header><span class="pill">VOICE PRACTICE • NO API KEY</span><h1>Medical Interpreter Voice Practice</h1><p class="muted">Practice a turn-by-turn medical encounter. Listen to the speaker, interpret aloud, and use the microphone button to transcribe your voice. This is a scripted practice tool, not a live AI or a certified assessment.</p></header>
+<section class="panel"><label for="direction">Practice direction</label><select id="direction"><option value="en-ar">English speaker → interpret into Arabic</option><option value="ar-en">Arabic speaker → interpret into English</option></select><label for="scenario">Scenario</label><select id="scenario"><option value="all">Mixed practice — all scenarios</option><option value="emergency">Emergency / triage</option><option value="pain">Pain assessment</option><option value="respiratory">Respiratory symptoms</option><option value="cardiac">Heart / chest symptoms</option><option value="diabetes">Diabetes / blood sugar</option><option value="medication">Medication / allergies</option><option value="surgery">Surgery / consent</option><option value="pregnancy">Pregnancy / women’s health</option><option value="pediatrics">Pediatrics</option><option value="mental">Mental health</option><option value="neurology">Neurology / headache</option><option value="digestive">Digestive symptoms</option><option value="urinary">Urinary symptoms</option><option value="injury">Injury / fall</option><option value="tests">Tests / imaging / labs</option><option value="discharge">Discharge instructions</option><option value="appointment">Appointments / registration</option><option value="insurance">Insurance / pharmacy</option><option value="infection">Infection / fever</option><option value="general">General medical history</option></select><button id="start">Start role-play</button></section>
+<section class="panel"><div class="speaker" id="speaker">PATIENT • ENGLISH</div><div class="prompt" id="prompt">Press Start role-play to begin.</div><div class="grid"><button id="play" class="secondary">▶ Play speaker</button><button id="repeat" class="secondary">↻ Repeat</button></div><p class="muted" id="instruction">Listen, then interpret the message aloud.</p><button id="mic">🎙️ Start speaking / interpreting</button><button id="stop" class="secondary" disabled>Stop microphone</button><div class="status" id="status">Microphone has not started.</div><label>Your speech transcript</label><div class="result transcript" id="transcript">Your recognized words will appear here when speech recognition is supported.</div><button id="speakTranscript" class="secondary">🔊 Play my transcript</button><button id="next" >Next turn →</button></section>
+<section class="panel"><h3 style="margin-top:0">Compare after interpreting</h3><button id="show" class="secondary">Show sample interpretation</button><div id="sampleWrap" class="hidden"><label>Sample meaning in the other language</label><div class="result" id="sample"></div><p class="muted">Your wording can be different. Check that you kept all symptoms, numbers, timing, negatives, and questions accurately.</p></div></section>
+<section class="panel"><h3 style="margin-top:0">If the microphone does not work</h3><p class="muted">Speech recognition depends on your browser and iPhone settings. Try opening the GitHub Pages link directly in Safari and allow microphone access. If speech recognition is unavailable, use the microphone on the iPhone keyboard to dictate into a text field, or test this page in a browser that supports Web Speech Recognition.</p><p class="muted">Use fictional practice only. Do not enter real patient names, records, or confidential call details.</p></section>
+</main><script>
+const scripts={
+emergency:[
+{who:'PATIENT',en:'I am having trouble breathing, and it started about twenty minutes ago.',ar:'عندي صعوبة في التنفس، وبدأت من حوالي عشرين دقيقة.'},
+{who:'PROVIDER',en:'Are you having chest pain, dizziness, or swelling of your lips or tongue?',ar:'هل عندك ألم في الصدر أو دوخة أو تورم في الشفايف أو اللسان؟'},
+{who:'PATIENT',en:'My chest feels tight, and I feel lightheaded when I stand up.',ar:'حاسس بضيق في صدري وبيدوخني لما أقف.'},
+{who:'PROVIDER',en:'We are going to check your oxygen level and vital signs right away.',ar:'هنقيس نسبة الأكسجين والعلامات الحيوية فورًا.'},
+{who:'PATIENT',en:'I also have a severe allergy, and I may have been exposed to the allergen.',ar:'عندي حساسية شديدة كمان، وممكن أكون اتعرضت للمادة اللي بتسببها.'},
+{who:'PROVIDER',en:'When did the symptoms begin, and have they been getting worse?',ar:'الأعراض بدأت إمتى؟ وهل بتزيد سوءًا؟'}],
+pain:[
+{who:'PROVIDER',en:'Please point to the area where you feel the pain.',ar:'من فضلك أشِر إلى المكان اللي بتحس فيه بالألم.'},
+{who:'PATIENT',en:'The pain is in my lower back, and it travels down my right leg.',ar:'الألم في أسفل ظهري وبيمتد لحد رجلي اليمين.'},
+{who:'PROVIDER',en:'Is the pain sharp, dull, burning, or cramping?',ar:'الألم حاد ولا مكتوم ولا حارق ولا على هيئة تقلصات؟'},
+{who:'PATIENT',en:'It is a burning pain, and it gets worse when I bend forward.',ar:'الألم حارق وبيزيد لما أنحني لقدام.'},
+{who:'PROVIDER',en:'What number would you give the pain from zero to ten?',ar:'تقيّم شدة الألم بكام من صفر لعشرة؟'},
+{who:'PATIENT',en:'It is an eight when I move and a four when I lie still.',ar:'بيكون تمانية لما أتحرك وأربعة لما أكون ثابت.'}],
+respiratory:[
+{who:'PATIENT',en:'I have been coughing for five days, and the cough is worse at night.',ar:'عندي كحة بقالي خمسة أيام، وبتزيد بالليل.'},
+{who:'PROVIDER',en:'Is the cough dry, or are you bringing up mucus?',ar:'الكحة ناشفة ولا بيطلع معاها بلغم؟'},
+{who:'PATIENT',en:'I am coughing up yellow mucus, but I have not noticed any blood.',ar:'بيطلع بلغم أصفر مع الكحة، لكن ما لاحظتش أي دم.'},
+{who:'PROVIDER',en:'Do you wheeze when you breathe or feel short of breath when walking?',ar:'هل عندك صفير أثناء التنفس أو ضيق نفس لما تمشي؟'},
+{who:'PATIENT',en:'I use an inhaler for asthma, but it has not helped much today.',ar:'بستخدم بخاخ للربو، لكنه ما ساعدنيش كتير النهارده.'},
+{who:'PROVIDER',en:'Have you had a fever or been around anyone who is sick?',ar:'هل عندك حرارة أو خالطت حد مريض؟'}],
+cardiac:[
+{who:'PATIENT',en:'I feel pressure in the middle of my chest, especially when I climb stairs.',ar:'بحس بضغط في منتصف صدري، خصوصًا لما أطلع السلم.'},
+{who:'PROVIDER',en:'Does the discomfort spread to your arm, jaw, shoulder, or back?',ar:'هل الإحساس ده بيمتد لذراعك أو فكك أو كتفك أو ظهرك؟'},
+{who:'PATIENT',en:'It spreads to my left shoulder, and I feel sweaty and nauseated.',ar:'بيمتد لكتفي الشمال، وبحس بعرق وغثيان.'},
+{who:'PROVIDER',en:'Have you ever been diagnosed with high blood pressure or high cholesterol?',ar:'هل سبق تشخيصك بارتفاع ضغط الدم أو الكوليسترول؟'},
+{who:'PATIENT',en:'I take a blood pressure pill every morning, but I missed it today.',ar:'باخد قرص للضغط كل صباح، لكن نسيت أخده النهارده.'},
+{who:'PROVIDER',en:'Please tell us exactly when the chest pressure started.',ar:'من فضلك قول لنا بالضبط إمتى بدأ الضغط في الصدر.'}],
+diabetes:[
+{who:'PROVIDER',en:'When did you last check your blood sugar, and what was the reading?',ar:'آخر مرة قست فيها السكر كانت إمتى، وكانت القراءة كام؟'},
+{who:'PATIENT',en:'It was two hundred and forty before breakfast this morning.',ar:'كانت مئتين وأربعين قبل الفطار النهارده الصبح.'},
+{who:'PROVIDER',en:'Have you been feeling unusually thirsty or urinating more often?',ar:'هل حاسس بعطش غير معتاد أو بتتبول أكتر من الطبيعي؟'},
+{who:'PATIENT',en:'I have been very thirsty, and my vision gets blurry sometimes.',ar:'عطشان جدًا، ونظري بيبقى مشوش أحيانًا.'},
+{who:'PROVIDER',en:'Do you take insulin, tablets, or both to manage your diabetes?',ar:'بتستخدم إنسولين ولا أقراص ولا الاتنين للتحكم في السكر؟'},
+{who:'PATIENT',en:'I take metformin twice a day and inject insulin before dinner.',ar:'باخد ميتفورمين مرتين يوميًا وبحقن إنسولين قبل العشا.'}],
+medication:[
+{who:'PROVIDER',en:'Please tell me the name and dose of every medicine you take.',ar:'من فضلك اذكر اسم وجرعة كل دواء بتاخده.'},
+{who:'PATIENT',en:'I take one five-milligram tablet every evening.',ar:'باخد قرص واحد بتركيز خمسة ملليجرام كل مساء.'},
+{who:'PROVIDER',en:'Do you have any allergies to medications, foods, or latex?',ar:'هل عندك حساسية من أدوية أو أطعمة أو اللاتكس؟'},
+{who:'PATIENT',en:'Penicillin gives me a rash, and aspirin upsets my stomach.',ar:'البنسلين بيسبب لي طفح جلدي، والأسبرين بيتعب معدتي.'},
+{who:'PROVIDER',en:'Have you taken any over-the-counter medicine or herbal supplements recently?',ar:'هل أخدت أي دواء من غير وصفة أو مكملات عشبية مؤخرًا؟'},
+{who:'PATIENT',en:'I took an antacid yesterday, but I do not remember the brand.',ar:'أخدت دواء للحموضة امبارح، لكن مش فاكر اسمه التجاري.'}],
+surgery:[
+{who:'PROVIDER',en:'The procedure is intended to remove the gallbladder using small incisions.',ar:'الإجراء هدفه إزالة المرارة من خلال شقوق صغيرة.'},
+{who:'PATIENT',en:'Will I be fully asleep during the procedure?',ar:'هل هكون تحت التخدير الكلي أثناء العملية؟'},
+{who:'PROVIDER',en:'Yes, an anesthesiologist will monitor you throughout the operation.',ar:'أيوه، طبيب التخدير هيراقب حالتك طوال العملية.'},
+{who:'PROVIDER',en:'Every procedure has risks, including bleeding, infection, and reactions to anesthesia.',ar:'كل إجراء له مخاطر، منها النزيف والعدوى والتفاعلات مع التخدير.'},
+{who:'PATIENT',en:'How long will I need to stay in the hospital afterward?',ar:'هحتاج أفضل في المستشفى قد إيه بعد العملية؟'},
+{who:'PROVIDER',en:'Please tell us if you take blood thinners or have had anesthesia problems before.',ar:'من فضلك بلغنا لو بتاخد مميعات دم أو حصلت لك مشاكل مع التخدير قبل كده.'}],
+pregnancy:[
+{who:'PROVIDER',en:'When was the first day of your last menstrual period?',ar:'إيه أول يوم في آخر دورة شهرية؟'},
+{who:'PATIENT',en:'It was around the tenth of September, but my cycles are irregular.',ar:'كانت تقريبًا يوم عشرة سبتمبر، لكن دورتي مش منتظمة.'},
+{who:'PROVIDER',en:'Have you had any vaginal bleeding, severe pain, or fluid leakage?',ar:'هل حصل نزيف مهبلي أو ألم شديد أو نزول سوائل؟'},
+{who:'PATIENT',en:'I have had mild cramping, but no bleeding or fluid leakage.',ar:'عندي تقلصات خفيفة، لكن مفيش نزيف ولا نزول سوائل.'},
+{who:'PROVIDER',en:'Are you taking prenatal vitamins or any other medication?',ar:'هل بتاخدي فيتامينات الحمل أو أي أدوية تانية؟'},
+{who:'PATIENT',en:'I take folic acid daily, and I have an appointment next week.',ar:'باخد حمض الفوليك يوميًا، وعندي موعد الأسبوع الجاي.'}],
+pediatrics:[
+{who:'PROVIDER',en:'How long has your child had a fever, and what was the highest temperature?',ar:'بقال الطفل قد إيه عنده حرارة، وأعلى درجة وصلت لكام؟'},
+{who:'PARENT',en:'The fever started last night and reached thirty-nine degrees Celsius.',ar:'الحرارة بدأت امبارح بالليل ووصلت لتسعة وتلاتين درجة مئوية.'},
+{who:'PROVIDER',en:'Is your child drinking fluids and having wet diapers as usual?',ar:'هل الطفل بيشرب سوائل وبيبلل الحفاضات كالمعتاد؟'},
+{who:'PARENT',en:'He is drinking less than usual and has had only two wet diapers today.',ar:'هو بيشرب أقل من المعتاد، وبلل الحفاض مرتين بس النهارده.'},
+{who:'PROVIDER',en:'Has your child had any medication today? Please tell me the dose and time.',ar:'هل الطفل أخد أي دواء النهارده؟ من فضلك قول لي الجرعة والوقت.'},
+{who:'PARENT',en:'I gave him five milliliters of fever medicine at seven this morning.',ar:'اديته خمسة ملليلتر من دواء الحرارة الساعة سبعة الصبح.'}],
+mental:[
+{who:'PROVIDER',en:'Over the past two weeks, how often have you felt down or hopeless?',ar:'خلال الأسبوعين اللي فاتوا، قد إيه حسيت بالحزن أو فقدان الأمل؟'},
+{who:'PATIENT',en:'Almost every day. I have also been having trouble sleeping.',ar:'تقريبًا كل يوم، وكمان عندي صعوبة في النوم.'},
+{who:'PROVIDER',en:'Have you lost interest in activities that you usually enjoy?',ar:'هل فقدت اهتمامك بأنشطة كنت بتستمتع بيها عادةً؟'},
+{who:'PATIENT',en:'Yes, I stopped seeing friends and rarely leave the house.',ar:'أيوه، بطلت أقابل أصحابي ونادرًا ما بخرج من البيت.'},
+{who:'PROVIDER',en:'Have you had thoughts of hurting yourself or feeling that life is not worth living?',ar:'هل جت لك أفكار بإيذاء نفسك أو إن الحياة مش مستاهلة؟'},
+{who:'PATIENT',en:'I have felt overwhelmed, and I would like help managing these feelings.',ar:'حاسس إن الضغوط فوق طاقتي، وعايز مساعدة في التعامل مع المشاعر دي.'}],
+neurology:[
+{who:'PATIENT',en:'This is the worst headache I have ever experienced, and it began suddenly.',ar:'ده أسوأ صداع حسيت بيه في حياتي، وبدأ فجأة.'},
+{who:'PROVIDER',en:'Did you experience weakness, numbness, difficulty speaking, or a sudden change in vision?',ar:'هل حسيت بضعف أو تنميل أو صعوبة في الكلام أو تغير مفاجئ في النظر؟'},
+{who:'PATIENT',en:'My right hand felt numb for about ten minutes, but it feels normal now.',ar:'إيدي اليمين كان فيها تنميل حوالي عشر دقايق، لكن دلوقتي رجعت طبيعية.'},
+{who:'PROVIDER',en:'Do you have a history of migraines, seizures, or head injuries?',ar:'هل عندك تاريخ مرضي للصداع النصفي أو التشنجات أو إصابات الرأس؟'},
+{who:'PATIENT',en:'I get migraines sometimes, but this headache feels different.',ar:'بيجيلي صداع نصفي أحيانًا، لكن الصداع ده مختلف.'},
+{who:'PROVIDER',en:'We need to assess these symptoms promptly.',ar:'لازم نقيّم الأعراض دي بسرعة.'}],
+digestive:[
+{who:'PATIENT',en:'I have had diarrhea since yesterday, about six times so far.',ar:'عندي إسهال من امبارح، حوالي ست مرات لحد دلوقتي.'},
+{who:'PROVIDER',en:'Have you noticed blood in your stool or had a fever?',ar:'هل لاحظت دم في البراز أو عندك حرارة؟'},
+{who:'PATIENT',en:'There is no blood, but I have stomach cramps and feel weak.',ar:'مفيش دم، لكن عندي تقلصات في البطن وحاسس بضعف.'},
+{who:'PROVIDER',en:'Can you keep fluids down, or have you been vomiting?',ar:'هل بتقدر تحتفظ بالسوائل في معدتك، ولا عندك قيء؟'},
+{who:'PATIENT',en:'I vomited twice and have barely been able to drink water.',ar:'رجعت مرتين وبالكاد قدرت أشرب مية.'},
+{who:'PROVIDER',en:'Have you traveled recently or eaten anything unusual?',ar:'هل سافرت مؤخرًا أو أكلت حاجة غير معتادة؟'}],
+urinary:[
+{who:'PATIENT',en:'It burns when I urinate, and I need to go more often than usual.',ar:'بحس بحرقان لما بتبول، وبحتاج أدخل الحمام أكتر من المعتاد.'},
+{who:'PROVIDER',en:'Do you have lower abdominal pain, back pain, or fever?',ar:'هل عندك ألم أسفل البطن أو الظهر أو حرارة؟'},
+{who:'PATIENT',en:'I have pain on my right side near my back, and I felt feverish last night.',ar:'عندي ألم في الناحية اليمين قرب ظهري، وحسيت بحرارة امبارح بالليل.'},
+{who:'PROVIDER',en:'Have you noticed blood in your urine?',ar:'هل لاحظت وجود دم في البول؟'},
+{who:'PATIENT',en:'The urine looked pink once this morning.',ar:'لون البول كان وردي مرة الصبح.'},
+{who:'PROVIDER',en:'Are you currently taking antibiotics or have you had urinary infections before?',ar:'هل بتاخد مضادات حيوية حاليًا أو جالك التهاب في المسالك البولية قبل كده؟'}],
+injury:[
+{who:'PATIENT',en:'I slipped on the stairs and landed on my left wrist.',ar:'اتزحلقت على السلم ووقعت على رسغي الشمال.'},
+{who:'PROVIDER',en:'Can you move your fingers, and do you have any numbness?',ar:'هل تقدر تحرك صوابعك، وهل عندك أي تنميل؟'},
+{who:'PATIENT',en:'I can move them, but my wrist is swollen and very painful.',ar:'أقدر أحركهم، لكن رسغي متورم وبيوجعني جدًا.'},
+{who:'PROVIDER',en:'Did you hit your head or lose consciousness when you fell?',ar:'هل خبطت راسك أو فقدت الوعي لما وقعت؟'},
+{who:'PATIENT',en:'I did not hit my head, and I did not lose consciousness.',ar:'مخبطتش راسي ومفقدتش الوعي.'},
+{who:'PROVIDER',en:'We may need an X-ray to check for a fracture.',ar:'ممكن نحتاج أشعة سينية للتأكد من عدم وجود كسر.'}],
+tests:[
+{who:'PROVIDER',en:'We need a blood test to check your blood count and electrolyte levels.',ar:'محتاجين تحليل دم لفحص صورة الدم ومستويات الأملاح.'},
+{who:'PATIENT',en:'Do I need to fast before the blood test?',ar:'هل لازم أصوم قبل تحليل الدم؟'},
+{who:'PROVIDER',en:'For this particular test, fasting is not required.',ar:'بالنسبة للتحليل ده تحديدًا، الصيام مش مطلوب.'},
+{who:'TECHNICIAN',en:'Please remove any metal objects before entering the MRI room.',ar:'من فضلك شيل أي أشياء معدنية قبل دخول غرفة الرنين المغناطيسي.'},
+{who:'PATIENT',en:'I have a metal implant in my knee. Is the MRI still safe for me?',ar:'عندي زرعة معدنية في ركبتي. هل الرنين المغناطيسي آمن بالنسبة لي؟'},
+{who:'PROVIDER',en:'Tell the imaging team about the implant before the scan begins.',ar:'بلغ فريق الأشعة بالزرعة قبل بدء الفحص.'}],
+discharge:[
+{who:'PROVIDER',en:'Take this antibiotic exactly as prescribed, and do not share it with anyone.',ar:'خد المضاد الحيوي بالضبط حسب الوصفة، وما تديهوش لأي شخص تاني.'},
+{who:'PATIENT',en:'Should I finish the entire course even if I feel better?',ar:'هل لازم أكمل مدة العلاج كلها حتى لو بقيت أحسن؟'},
+{who:'PROVIDER',en:'Yes, follow the prescribed course and contact us if you develop a rash or severe diarrhea.',ar:'أيوه، التزم بمدة العلاج الموصوفة واتصل بنا لو ظهر طفح جلدي أو إسهال شديد.'},
+{who:'PROVIDER',en:'Return immediately if you develop worsening pain, difficulty breathing, or a high fever.',ar:'ارجع فورًا لو الألم زاد أو حصل ضيق تنفس أو حرارة مرتفعة.'},
+{who:'PATIENT',en:'When should I schedule my follow-up appointment?',ar:'أحدد موعد المتابعة إمتى؟'},
+{who:'PROVIDER',en:'Please arrange a follow-up visit in one week, or sooner if symptoms worsen.',ar:'من فضلك رتّب زيارة متابعة خلال أسبوع، أو قبل كده لو الأعراض ساءت.'}],
+appointment:[
+{who:'RECEPTIONIST',en:'Do you have an appointment, or are you here as a walk-in patient?',ar:'هل عندك موعد، ولا جاي من غير حجز مسبق؟'},
+{who:'PATIENT',en:'I have an appointment at ten thirty under the name Rawan Hassan.',ar:'عندي موعد الساعة عشرة ونص باسم روان حسن.'},
+{who:'RECEPTIONIST',en:'Could you please confirm your date of birth and current phone number?',ar:'ممكن تأكد تاريخ ميلادك ورقم تليفونك الحالي؟'},
+{who:'PATIENT',en:'My date of birth is the fourteenth of March, nineteen ninety-eight.',ar:'تاريخ ميلادي أربعة عشر مارس سنة ألف وتسعمية تمانية وتسعين.'},
+{who:'RECEPTIONIST',en:'Please complete these forms and bring them to the front desk.',ar:'من فضلك املا الاستمارات دي ورجّعها للاستقبال.'},
+{who:'PATIENT',en:'Could you tell me where the laboratory is located?',ar:'ممكن تقول لي المعمل موجود فين؟'}],
+insurance:[
+{who:'PATIENT',en:'My insurance company says this medication requires prior authorization.',ar:'شركة التأمين بتقول إن الدواء ده محتاج موافقة مسبقة.'},
+{who:'STAFF',en:'We will send the request to your insurance provider, but approval may take several business days.',ar:'هنبعت الطلب لشركة التأمين، لكن الموافقة ممكن تستغرق عدة أيام عمل.'},
+{who:'PATIENT',en:'How much will I have to pay if the medication is not covered?',ar:'هضطر أدفع كام لو التأمين مش بيغطي الدواء؟'},
+{who:'PHARMACIST',en:'Your copayment depends on your plan. Please contact your insurer for the exact amount.',ar:'المبلغ اللي هتدفعه حسب خطتك التأمينية. من فضلك تواصل مع شركة التأمين لمعرفة المبلغ الدقيق.'},
+{who:'PATIENT',en:'Can I receive a generic version that costs less?',ar:'هل ممكن آخد بديل جنيس أرخص؟'},
+{who:'PHARMACIST',en:'I will check with the prescriber to see whether a generic alternative is appropriate.',ar:'هراجع الطبيب الواصف عشان أتأكد إذا كان البديل الجنيس مناسبًا.'}],
+infection:[
+{who:'PATIENT',en:'I have chills, muscle aches, and a fever that keeps coming back.',ar:'عندي رعشة وألم في العضلات وحرارة بترجع تاني.'},
+{who:'PROVIDER',en:'Have you taken your temperature, and what was the highest reading?',ar:'هل قست حرارتك، وأعلى قراءة كانت كام؟'},
+{who:'PATIENT',en:'It reached thirty-eight point seven degrees last night.',ar:'وصلت لتمانية وتلاتين فاصلة سبعة بالليل.'},
+{who:'PROVIDER',en:'Have you recently tested positive for influenza or COVID?',ar:'هل نتيجة اختبار الإنفلونزا أو كوفيد كانت إيجابية مؤخرًا؟'},
+{who:'PATIENT',en:'I tested negative for COVID two days ago, but my symptoms have worsened.',ar:'اختبار كوفيد كان سلبي من يومين، لكن الأعراض زادت.'},
+{who:'PROVIDER',en:'Please tell us if you develop confusion, severe weakness, or difficulty breathing.',ar:'من فضلك بلغنا لو حصل تشوش أو ضعف شديد أو صعوبة في التنفس.'}],
+general:[
+{who:'PROVIDER',en:'Do you have any chronic medical conditions or previous hospitalizations?',ar:'هل عندك أمراض مزمنة أو دخلت المستشفى قبل كده؟'},
+{who:'PATIENT',en:'I have asthma, and I was hospitalized for pneumonia three years ago.',ar:'عندي ربو، ودخلت المستشفى بسبب التهاب رئوي من ثلاث سنين.'},
+{who:'PROVIDER',en:'Does anyone in your immediate family have heart disease, diabetes, or cancer?',ar:'هل في حد من أسرتك القريبة عنده مرض بالقلب أو السكري أو السرطان؟'},
+{who:'PATIENT',en:'My father has diabetes, and my mother has high blood pressure.',ar:'والدي عنده سكري ووالدتي عندها ضغط مرتفع.'},
+{who:'PROVIDER',en:'Do you smoke, vape, or drink alcohol?',ar:'هل بتدخن أو بتستخدم السجائر الإلكترونية أو بتشرب الكحول؟'},
+{who:'PATIENT',en:'I do not smoke, and I exercise twice a week when I have time.',ar:'أنا مش بدخن، وبتمرن مرتين في الأسبوع لما بكون فاضي.'}],
+headache:[{who:'PATIENT',en:'I have had a headache since yesterday. Bright lights make it worse.',ar:'عندي صداع من امبارح، والنور القوي بيخلّيه أسوأ.'},{who:'PROVIDER',en:'Have you had any nausea, vomiting, or changes in your vision?',ar:'هل حسّيت بغثيان أو قيء أو أي تغيّر في النظر؟'},{who:'PATIENT',en:'I felt nauseated this morning, but I have not vomited.',ar:'حسّيت بغثيان الصبح، لكن مرجعتش.'}],
+abdominal:[{who:'PATIENT',en:'The pain started three days ago on the left side of my abdomen.',ar:'الوجع بدأ من تلات أيام في الناحية الشمال من بطني.'},{who:'PROVIDER',en:'On a scale from zero to ten, how severe is the pain?',ar:'على مقياس من صفر لعشرة، شدة الألم قد إيه؟'},{who:'PATIENT',en:'It is about a seven, and it gets worse after I eat.',ar:'حوالي سبعة، وبيزيد بعد ما باكل.'}]
+};
+let turns=[],idx=0,recognition=null,finalText='',interimText='';const $=id=>document.getElementById(id);
+function langForSpeaker(t){let dir=$('direction').value;return dir==='en-ar'?'en-US':'ar-EG'}
+function render(){if(!turns.length)return;let t=turns[idx],dir=$('direction').value;let source=dir==='en-ar'?t.en:t.ar;let sample=dir==='en-ar'?t.ar:t.en;$('speaker').textContent=t.who+' • '+(dir==='en-ar'?'ENGLISH':'ARABIC');$('prompt').textContent=source;$('sample').textContent=sample;$('sampleWrap').classList.add('hidden');$('transcript').textContent='Your recognized words will appear here.';$('status').textContent='Listen to the speaker, then interpret aloud.';$('instruction').textContent=`Turn ${idx+1} of ${turns.length}. Interpret into ${dir==='en-ar'?'Arabic':'English'}.`;}
+function speakText(text,lang){if(!('speechSynthesis'in window)){alert('Audio playback is not supported in this browser.');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=.88;let voices=speechSynthesis.getVoices();let v=voices.find(x=>x.lang.toLowerCase()===lang.toLowerCase())||voices.find(x=>x.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()));if(v)u.voice=v;speechSynthesis.speak(u)}
+function play(){if(!turns.length){alert('Press Start role-play first.');return}let t=turns[idx],dir=$('direction').value;speakText(dir==='en-ar'?t.en:t.ar,langForSpeaker(t))}
+function startRoleplay(){const choice=$('scenario').value;turns=choice==='all'?Object.keys(scripts).filter(k=>k!=='all').flatMap(k=>scripts[k]):scripts[choice];idx=0;render();play()}
+function startMic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('status').textContent='Speech recognition is not available in this browser. Try Safari with microphone permission, or use iPhone keyboard dictation.';return}try{recognition=new SR();recognition.lang=$('direction').value==='en-ar'?'ar-EG':'en-US';recognition.continuous=true;recognition.interimResults=true;finalText='';interimText='';$('mic').disabled=true;$('stop').disabled=false;$('status').textContent='Listening… Speak your interpretation now.';recognition.onresult=e=>{interimText='';for(let i=e.resultIndex;i<e.results.length;i++){let txt=e.results[i][0].transcript;if(e.results[i].isFinal)finalText+=txt+' ';else interimText+=txt} $('transcript').textContent=(finalText+interimText).trim()||'Listening…'};recognition.onerror=e=>{$('status').textContent='Microphone issue: '+e.error+'. Check Safari microphone permission.'};recognition.onend=()=>{$('mic').disabled=false;$('stop').disabled=true;if(finalText.trim())$('status').textContent='Done. Your spoken interpretation was transcribed.'};recognition.start()}catch(e){$('status').textContent='Could not start microphone. Check browser permission and try again.';$('mic').disabled=false;$('stop').disabled=true}}
+function stopMic(){if(recognition){recognition.stop();recognition=null}$('mic').disabled=false;$('stop').disabled=true;$('status').textContent=finalText.trim()?'Recording stopped. Review your transcript.':'Microphone stopped.'}
+$('start').onclick=startRoleplay;$('play').onclick=play;$('repeat').onclick=play;$('mic').onclick=startMic;$('stop').onclick=stopMic;$('next').onclick=()=>{if(!turns.length){startRoleplay();return}idx=(idx+1)%turns.length;render();play()};$('show').onclick=()=>{$('sampleWrap').classList.toggle('hidden')};$('speakTranscript').onclick=()=>{let t=$('transcript').textContent;if(!t||t.startsWith('Your recognized')||t==='Listening…'){alert('Speak first so there is a transcript to play.');return}speakText(t,$('direction').value==='en-ar'?'ar-EG':'en-US')};window.addEventListener('beforeunload',()=>{if(recognition)recognition.stop()});
+</script></body></html>
